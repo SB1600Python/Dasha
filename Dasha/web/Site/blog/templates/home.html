@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Home</title>
+</head>
+<body style="color: firebrick; margin: 30px;">
+    <h1>Python site in home</h1>
+    {% for post in posts %}
+        <a href="">{{ post.title }}</a><br>
+        <h3>{{ post.text }}</h3><br>
+    {% endfor %}
+</body>
+</html>
