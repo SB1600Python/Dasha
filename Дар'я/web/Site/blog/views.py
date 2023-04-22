@@ -24,10 +24,10 @@ def detail(request, pk):
 
 def view_login(request):
     if request.method == 'POST':
-        form = AuthenticationForm(data=request.Post)
+        form = AuthenticationForm(data=request.POST)
         if form.is_valid():
             username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('passwordd')
+            password = form.cleaned_data.get('password ')
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
@@ -46,11 +46,19 @@ class RegisterView(View):
     
     def get(self, request):
         form = self.form_class()
-        return render(request, self.template_name, {'form': self.form_class})
+        return render(request, self.template_name, {'form': form})
     
-    def get(self, request):
+    def post(self, request):
         form = self.form_class(request.POST)
-        if form.is_valid:
+        if form.is_valid():
             user = form.save()
             return redirect('login')
         return render(request, self.template_name, {'form': form})
+    
+
+def logout_view(request):
+    logout(request)
+    return redirect('login')
+
+def create_post(request):
+    return redirect('home')

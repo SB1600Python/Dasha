@@ -27,7 +27,9 @@ urlpatterns = [
     path('<int:pk>/', detail, name='detail'),
     path('login/', view_login, name='login'),
     path('signup/', view_signup, name='signup'),
-    path('register', RegisterView.as_view(), name='register')
+    path('register', RegisterView.as_view(), name='register'),
+    path('logout', logout_view, name='logout'),
+    path('createPost', create_post, name='create')
 ]
 
 if settings.DEBUG:
