@@ -5,7 +5,7 @@
     <form class="log" method="post">
         <h2>Login</h2>
         {% csrf_token %}
-        {{ form.as_p }}
+        {{ form_l.as_p }}
         <button type="submit" style="margin: 20px;">Login</button>
     </form>
 {% endblock %}
