@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, HttpResponseRedirect
 from blog.models import Post
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import authenticate, login, logout
@@ -71,3 +71,11 @@ class PostView(CreateView):
     model = Post
     template_name = 'post.html'
     form_class = PostForm
+
+def delete(request, id):
+    try:
+        post = Post.objects.get(id=id)
+        post.delete()
+        return redirect('home')
+    except:
+        return HttpResponseRedirect('/')
