@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, HttpResponseRedirect
+from django.shortcuts import render, redirect, HttpResponseRedirect, get_object_or_404
 from blog.models import Post
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import authenticate, login, logout
@@ -6,7 +6,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import CreateView
-from blog.forms import PostForm
+from blog.forms import PostForm, ChatForm
 
 # Create your views here.
 def home(request):
@@ -79,3 +79,27 @@ def delete(request, id):
         return redirect('home')
     except:
         return HttpResponseRedirect('/')
+    
+def update(request, id):
+    try:
+        post = get_object_or_404(Post, id=id)
+
+        if request.method == 'GET':
+            form = PostForm(instance=post)
+            if request.user is not post.author:
+                return render(request, 'update.html', {'form': form})
+            
+        if request.method == 'POST':
+            form = PostForm(request.POST, instance=post)
+            if form.is_valid():
+                form.save()
+                return redirect('home')
+
+    except Exception as e:
+        print(e)
+
+def chat(request):
+    if request.method == 'GET':
+        form = ChatForm()
+        messages = Message.objects.all()
+        return redirect(request, 'chat.html', {'form' : form, 'message' : messages})

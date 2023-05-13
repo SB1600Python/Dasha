@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Chat{% endblock %}
+{% block content %}
+    <script>
+        const axios = () => {
+            
+        }
+    </script>
+    <form class="log" method="post">
+        <h2>Chat</h2>
+        {% csrf_token %}
+        <>
+        {{ form_l.as_p }}
+        <button type="submit" style="margin: 20px;">Send</button>
+    </form>
+{% endblock %}
