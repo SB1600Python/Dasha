@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, HttpResponseRedirect, get_object_or_404
-from blog.models import Post
+from blog.models import *
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import authenticate, login, logout
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -98,8 +98,13 @@ def update(request, id):
     except Exception as e:
         print(e)
 
-def chat(request):
+def chat(request, room_id):
+    room = ChatRoom.objects.get(id=room_id)
+    messages = room.messages.all()
+    
     if request.method == 'GET':
-        form = ChatForm()
-        messages = Message.objects.all()
-        return redirect(request, 'chat.html', {'form' : form, 'message' : messages})
+        messages_text = request.POST.get('message')
+        messages_user = request.user
+        message = Message.objects.create(room=room, text=messages_text, author=messages_user)
+        messages = room.messages.all()
+    return render(request, 'chat.html', {'room': room, 'messages': messages})

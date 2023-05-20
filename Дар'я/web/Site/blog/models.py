@@ -28,6 +28,13 @@ class Category(models.Model):
 class Pl(models.Model):
     name = models.CharField(max_length=25)
 
+class ChatRoom(models.Model):
+    name = models.CharField(max_length=60)
+
+    def __str__(self):
+        return self.name
+
 class Message(models.Model):
     author = models.ForeignKey(User, on_delete=models.PROTECT, default="Anonim")
-    text = models.TextField()
+    text = models.TextField(null=True)
+    room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE, related_name='messages')
