@@ -16,8 +16,17 @@
         <div class="col-4 offset-1">
             <h3>Інформація</h3>
             {% for info in all_info %}
-                {{info.city}}
-                {{info.temp}}
+            <div class="alert alert-success">
+                <div class="row">
+                    <div class="col-9">
+                        <b>Місто: </b> {{info.city}}<br>
+                        <b>Температура: </b> {{info.temp}}<sup>o</sup><br>
+                    </div>
+                    <div class="col-2 offset-1">
+                        <img src="https://openweathermap.org/img/w/{{info.icon}}.png" alt="Фото погоди">
+                    </div>
+                </div>
+            </div> 
             {% endfor %}
         </div>
     </div>
