@@ -36,7 +36,6 @@ urlpatterns = [
     path('delete/<int:id>/', delete, name='post_delete'),
     path('update/<int:id>/', update, name='post_update'),
     path('chat/<int:room_id>/', chat, name='chat'),
-    path('weather/', include('weather.urls'))
 ]
 
 if settings.DEBUG:

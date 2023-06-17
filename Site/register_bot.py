@@ -3,6 +3,7 @@ import logging
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import FSMContext
+from aiogram.dispatcher.filters import Text
 from aiogram.types import ParseMode
 import aiogram.utils.markdown as md
 from aiogram import Bot, Dispatcher, executor, types 
@@ -15,12 +16,22 @@ import django
 django.setup()
 
 from django.contrib.auth.models import User
+from blog.models import Profile
 from asgiref.sync import sync_to_async
 
+def check_password(password):
+    if len(password) <= 8:
+        return not password
+    elif len(password) >8 and len(password) < 26:
+        if not password.istitle():
+            return not password
+        else:
+            return password
 
 API_TOKEN = '6060836398:AAF2QTJ0HYWkwQMTy_MlqCkBK2YVdwQhBTU'
 
 bot = Bot(token=API_TOKEN)
+
 storage = MemoryStorage()
 dp = Dispatcher(bot, storage=storage)
 
@@ -51,6 +62,17 @@ async def command_start(message: types.Message):
     elif message.text == '/help':
         await message.answer('Write /start')
 
+@sync_to_async
+def check_user(username):
+    try:
+        profile = Profile.objects.get(username=username)
+        if profile:
+            return False
+        else:
+            return True
+    except:
+        return True
+
 @dp.message_handler(commands=['Yes', 'No'])
 async def check_answer(message: types.Message):
     if message.text == '/Yes':
@@ -60,6 +82,30 @@ async def check_answer(message: types.Message):
         await message.answer('Are you want registration?')
     else:
         markup = types.ReplyKeyboardRemove()
+
+@dp.message_handler(state='*', commands=['Cancel'])
+@dp.message_handler(Text(equals='Cancle', ignore_case=True), state='*')
+async def cancel_handler(message: types.Message, state: FSMContext):
+    current_state = await state.get_state()
+    if current_state is None:
+        return False
+    
+    logging.info('Cancelling state', current_state)
+    await state.finish()
+    await message.reply('Cancel', reply_markup=types.ReplyKeyboardRemove())
+
+@dp.message_handler(state=RegistrationForm.login)
+async def process_login(message: types, state: FSMContext):
+    async with state.proxy() as data:
+        data['login'] = message.text
+
+        await RegistrationForm.next()
+        await message.reply("Input password: ")
+
+@dp.message_handler(lambda message: not check_password(message.text), state=RegistrationForm.password)
+async def process_password_invalid(message: types):
+    return await message.reply("Пароль повинен бути з великої літери та в паролі повинно бути більше 8 символів")
+
 
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=True)

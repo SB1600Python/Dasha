@@ -38,3 +38,11 @@ class Message(models.Model):
     author = models.ForeignKey(User, on_delete=models.PROTECT, default="Anonim")
     text = models.TextField(null=True)
     room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE, related_name='messages')
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.PROTECT)
+    name = models.CharField(max_length=30)
+    username = models.CharField(max_length=20)
+    
+    def __str__(self):
+        return self.name
